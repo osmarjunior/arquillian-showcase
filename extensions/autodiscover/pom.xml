@@ -16,6 +16,18 @@
     <name>Arquillian Showcase Extension: Autodiscover</name>
     <description>Examples that demonstrate how to add support for autodiscover dependencies and enrich via extension</description>
 
+	<dependencyManagement>
+	  <dependencies>
+	    <dependency>
+	      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+	      <artifactId>shrinkwrap-resolver-bom</artifactId>
+	      <version>2.2.2</version>
+	      <scope>import</scope>
+	      <type>pom</type>
+	    </dependency>
+	  </dependencies>
+	</dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
@@ -30,8 +42,8 @@
             <artifactId>arquillian-container-test-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+      		<groupId>org.jboss.shrinkwrap.resolver</groupId>
+      		<artifactId>shrinkwrap-resolver-api-maven</artifactId>
         </dependency>
 		<dependency>
 		    <groupId>org.easymock</groupId>

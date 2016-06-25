@@ -23,8 +23,7 @@ import org.jboss.arquillian.showcase.extension.autodiscover.ReflectionHelper;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 /**
  * DeclarativeArchiveProcessor
@@ -56,16 +55,14 @@ public class ArchiveProcessor implements ApplicationArchiveProcessor {
 	private void appendFestLibrary(Archive<?> applicationArchive) {
 		if (applicationArchive instanceof LibraryContainer) {
 			LibraryContainer<?> container = (LibraryContainer<?>) applicationArchive;
-			container.addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-					.loadMetadataFromPom("pom.xml").artifact(FEST_ARTIFACT).resolveAsFiles());
+			container.addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml").resolve(FEST_ARTIFACT).withTransitivity().asFile());
 		}
 	}
 
 	private void appendMockitoLibrary(Archive<?> applicationArchive) {
 		if (applicationArchive instanceof LibraryContainer) {
 			LibraryContainer<?> container = (LibraryContainer<?>) applicationArchive;
-			container.addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-					.loadMetadataFromPom("pom.xml").artifact(EASYMOCK_ARTIFACT).resolveAsFiles());
+			container.addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml").resolve(EASYMOCK_ARTIFACT).withTransitivity().asFile());
 		}
 	}
 }
