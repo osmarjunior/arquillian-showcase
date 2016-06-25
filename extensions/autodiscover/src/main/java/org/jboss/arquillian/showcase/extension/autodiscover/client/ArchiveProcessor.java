@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.showcase.extension.autodiscover.client;
 
+import org.easymock.Mock;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.showcase.extension.autodiscover.ReflectionHelper;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -24,7 +25,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
-import org.mockito.Mock;
 
 /**
  * DeclarativeArchiveProcessor
@@ -32,54 +32,40 @@ import org.mockito.Mock;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ArchiveProcessor implements ApplicationArchiveProcessor
-{
-   private static final String ANNOTATION_CLASS_NAME = "org.mockito.Mock";
-   private static final String MOCKITO_ARTIFACT = "org.mockito:mockito-all";
+public class ArchiveProcessor implements ApplicationArchiveProcessor {
+	
+	private static final String ANNOTATION_CLASS_NAME = "org.easymock.Mock";
+	private static final String EASYMOCK_ARTIFACT = "org.easymock:easymock";
 
-   private static final String FEST_ASSERTIONS_CLASS_NAME = "org.fest.assertions.Assertions";
-   private static final String FEST_ARTIFACT = "org.easytesting:fest-assert";
-   
-   @Override
-   public void process(Archive<?> applicationArchive, TestClass testClass)
-   {
-      if(ReflectionHelper.isClassPresent(FEST_ASSERTIONS_CLASS_NAME))
-      {
-         appendFestLibrary(applicationArchive);
-      }
-      
-      if(ReflectionHelper.isClassPresent(ANNOTATION_CLASS_NAME))
-      {
-         if(ReflectionHelper.getFieldsWithAnnotation(testClass.getJavaClass(), Mock.class).size() > 0)
-         {
-            appendMockitoLibrary(applicationArchive);
-         }
-      }
-   }
-   
-   private void appendFestLibrary(Archive<?> applicationArchive)
-   {
-       if(applicationArchive instanceof LibraryContainer)
-       {
-           LibraryContainer<?> container = (LibraryContainer<?>) applicationArchive;
-           container.addAsLibraries(
-                   DependencyResolvers.use(MavenDependencyResolver.class)
-                   .loadMetadataFromPom("pom.xml")
-                   .artifact(FEST_ARTIFACT)
-                   .resolveAsFiles());
-       }
-   }
+	private static final String FEST_ASSERTIONS_CLASS_NAME = "org.fest.assertions.Assertions";
+	private static final String FEST_ARTIFACT = "org.easytesting:fest-assert";
 
-   private void appendMockitoLibrary(Archive<?> applicationArchive)
-   {
-      if(applicationArchive instanceof LibraryContainer)
-      {
-         LibraryContainer<?> container = (LibraryContainer<?>)applicationArchive;
-         container.addAsLibraries(
-               DependencyResolvers.use(MavenDependencyResolver.class)
-                  .loadMetadataFromPom("pom.xml")
-                  .artifact(MOCKITO_ARTIFACT)
-                  .resolveAsFiles());
-      }
-   }
+	@Override
+	public void process(Archive<?> applicationArchive, TestClass testClass) {
+		if (ReflectionHelper.isClassPresent(FEST_ASSERTIONS_CLASS_NAME)) {
+			appendFestLibrary(applicationArchive);
+		}
+
+		if (ReflectionHelper.isClassPresent(ANNOTATION_CLASS_NAME)) {
+			if (ReflectionHelper.getFieldsWithAnnotation(testClass.getJavaClass(), Mock.class).size() > 0) {
+				appendMockitoLibrary(applicationArchive);
+			}
+		}
+	}
+
+	private void appendFestLibrary(Archive<?> applicationArchive) {
+		if (applicationArchive instanceof LibraryContainer) {
+			LibraryContainer<?> container = (LibraryContainer<?>) applicationArchive;
+			container.addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
+					.loadMetadataFromPom("pom.xml").artifact(FEST_ARTIFACT).resolveAsFiles());
+		}
+	}
+
+	private void appendMockitoLibrary(Archive<?> applicationArchive) {
+		if (applicationArchive instanceof LibraryContainer) {
+			LibraryContainer<?> container = (LibraryContainer<?>) applicationArchive;
+			container.addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
+					.loadMetadataFromPom("pom.xml").artifact(EASYMOCK_ARTIFACT).resolveAsFiles());
+		}
+	}
 }

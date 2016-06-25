@@ -21,10 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.easymock.EasyMock;
+import org.easymock.Mock;
 import org.jboss.arquillian.showcase.extension.autodiscover.ReflectionHelper;
 import org.jboss.arquillian.test.spi.TestEnricher;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 /**
  * Enricher
@@ -32,43 +32,34 @@ import org.mockito.Mockito;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class Enricher implements TestEnricher
-{
-   private static final String ANNOTATION_CLASS_NAME = "org.mockito.Mock";
+public class Enricher implements TestEnricher {
+	
+	private static final String ANNOTATION_CLASS_NAME = "org.easymock.Mock";
 
-   @Override
-   public void enrich(Object testCase)
-   {
-      if(ReflectionHelper.isClassPresent(ANNOTATION_CLASS_NAME))
-      {
-         enrichFields(testCase);
-      }
-   }
-   
-   private void enrichFields(Object testCase)
-   {
-      List<Field> mockFields = ReflectionHelper.getFieldsWithAnnotation(testCase.getClass(), Mock.class);
-      for(Field mockField : mockFields)
-      {
-         try
-         {
-            Object mocked = Mockito.mock(mockField.getType());
-            if(!mockField.isAccessible())
-            {
-               mockField.setAccessible(true);
-            }
-            mockField.set(testCase, mocked);
-         }
-         catch (Exception e) 
-         {
-            throw new RuntimeException("Could not inject mocked object on field " + mockField, e);
-         }
-      }
-   }
+	@Override
+	public void enrich(Object testCase) {
+		if (ReflectionHelper.isClassPresent(ANNOTATION_CLASS_NAME)) {
+			enrichFields(testCase);
+		}
+	}
 
-   @Override
-   public Object[] resolve(Method method)
-   {
-      return new Object[method.getParameterTypes().length];
-   }
+	private void enrichFields(Object testCase) {
+		List<Field> mockFields = ReflectionHelper.getFieldsWithAnnotation(testCase.getClass(), Mock.class);
+		for (Field mockField : mockFields) {
+			try {
+				Object mocked = EasyMock.mock(mockField.getType());
+				if (!mockField.isAccessible()) {
+					mockField.setAccessible(true);
+				}
+				mockField.set(testCase, mocked);
+			} catch (Exception e) {
+				throw new RuntimeException("Could not inject mocked object on field " + mockField, e);
+			}
+		}
+	}
+
+	@Override
+	public Object[] resolve(Method method) {
+		return new Object[method.getParameterTypes().length];
+	}
 }

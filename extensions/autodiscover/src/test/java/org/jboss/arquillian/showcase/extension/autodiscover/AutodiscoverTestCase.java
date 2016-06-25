@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.showcase.extension.autodiscover;
 
+import org.easymock.EasyMock;
+import org.easymock.Mock;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -25,8 +27,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 /**
  *
@@ -34,24 +34,24 @@ import org.mockito.Mockito;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class AutodiscoverTestCase
-{
-   @Deployment
-   public static WebArchive deploy() {
-      return ShrinkWrap.create(WebArchive.class)
-            .addClass(AccountService.class);
-   }
+public class AutodiscoverTestCase {
+	
+	@Deployment
+	public static WebArchive deploy() {
+		return ShrinkWrap.create(WebArchive.class).addClass(AccountService.class);
+	}
 
-   @Mock
-   private AccountService service;
-   
-   @Before
-   public void setupMock() {
-      Mockito.when(service.withdraw(100)).thenReturn(100);      
-   }
-   
-   @Test
-   public void shouldBeAbleToMock() throws Exception {
-      Assert.assertEquals(100, service.withdraw(100));
-   }
+	@Mock
+	private AccountService service;
+
+	@Before
+	public void setupMock() {
+		EasyMock.expect(service.withdraw(100)).andReturn(100);
+		EasyMock.replay(service);
+	}
+
+	@Test
+	public void shouldBeAbleToMock() throws Exception {
+		Assert.assertEquals(100, service.withdraw(100));
+	}
 }

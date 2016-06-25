@@ -21,6 +21,8 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import javax.enterprise.inject.Produces;
 
+import org.easymock.EasyMock;
+import org.easymock.Mock;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -29,33 +31,32 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class AutodiscoverCDITestCase
-{
-   @Deployment
-   public static WebArchive deploy() {
-      return ShrinkWrap.create(WebArchive.class)
-            .addClasses(AccountService.class, Manager.class)
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-   }
+public class AutodiscoverCDITestCase {
+	
+	@Deployment
+	public static WebArchive deploy() {
+		return ShrinkWrap.create(WebArchive.class).addClasses(AccountService.class, Manager.class)
+				.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
 
-   @Mock @Produces
-   private static AccountService service;
-   
-   @Before
-   public void setupMock() {
-      Mockito.when(service.withdraw(100)).thenReturn(100);      
-   }
-   
-   @Test
-   public void shouldBeAbleToMock(Manager manager) throws Exception {
-      assertThat(manager.execute(100)).isEqualTo(100);
-   }
+	@Mock
+	@Produces
+	private static AccountService service;
+
+	@Before
+	public void setupMock() {
+		EasyMock.expect(service.withdraw(100)).andReturn(100);
+		EasyMock.replay(service);
+	}
+
+	@Test
+	public void shouldBeAbleToMock(Manager manager) throws Exception {
+		assertThat(manager.execute(100)).isEqualTo(100);
+	}
 }
