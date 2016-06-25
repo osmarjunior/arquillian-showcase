@@ -4,8 +4,8 @@ AutoDiscover Dependencies / Runtime Enrichment Extension
 Extension showing how you can append additional classes / resources to your @Deployment by scanning the TestClass for metadata, 
 without defining them directly in the @Deployemnt method and do runtime enrichment.
 
-Extension will add the library "org.mockito:mockito-all" to the @Deployment if a @Mock field is defined on the TestClass. 
-When executed in-container the @Mock fields will be enriched by mocking them in Mockito and injected into the test instance.  
+Extension will add the library "org.easymock:easymock" to the @Deployment if a @Mock field is defined on the TestClass. 
+When executed in-container the @Mock fields will be enriched by mocking them in EasyMock and injected into the test instance.  
 
     @RunWith(Arquillian.class)
     public class MyTestCase {
@@ -20,7 +20,7 @@ When executed in-container the @Mock fields will be enriched by mocking them in 
         private AccountService service;
     
         @Test
-        public void shouldBeAbleToAccessMockito() {
+        public void shouldBeAbleToAccessEasyMock() {
             service.withdraw(100);
         }
     }
